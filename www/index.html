@@ -1,0 +1,54 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <script src="cordova.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <!--Este Js es el que tiene las funciones que hicimos hoy. Las que no necesites, bórralas.-->
+    <script src="js/FileFunctions.js"></script>
+</head>
+
+<body>
+<!--Pagina Donde se Listaran todos los archivos TXT-->
+<!--Se listaran con la funcion deviceReady() para que salgan al cargarse-->
+<section data-role="page" id="index">
+
+    <h1>Manejo de Archivos</h1>
+
+    <!--Los archivos que se listen se les debe de poder hacer click y
+      mostrar un mensaje para eliminarlos o editarlos-->
+
+    <table data-role="table" id="tableList"></table>
+
+    <a href="#alta">Nueva</a>
+    <a href="#modificar">Modificar</a>
+</section>
+
+<section data-role="page" id="modificar">
+    <h1>Modificar Archivos</h1>
+    <label for="nombre_archivo_modificar">Nombre:</label>
+    <input type="text" id="nombre_archivo_modificar" disabled/>
+
+    <label for="nombre_archivo_modificar">Contenido:</label>
+    <textarea cols="30" rows="50" id="contenido_archivo_modificar" title="Contenido"></textarea>
+
+    <input type="button" onclick="saveEditedFile();" value="Guardar"/>
+    <input type="button" onclick="cancelar();" value="cancelar"/>
+
+</section>
+
+<section data-role="page" id="alta">
+    <h1>Alta Archivos</h1>
+    <label for="nombre_archivo_alta">Nombre:</label>
+    <input type="text" id="nombre_archivo_alta"/>
+
+    <label for="nombre_archivo_modificar">Contenido:</label>
+    <textarea cols="30" rows="50" id="contenido_archivo_alta"></textarea>
+
+    <input type="button" onclick="saveFile();" value="Guardar"/>
+    <input type="button" onclick="cancelar();" value="cancelar"/>
+
+</section>
+</body>
+</html>
