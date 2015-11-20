@@ -1,7 +1,7 @@
 document.addEventListener("deviceready", onDeviceReady, false);
 var filesystem = null;
 var pathContext = "proyecto/";
-var rootPath = "proyecto";
+var folderName = "proyecto";
 
 function onDeviceReady() {
     window.requestFileSystem = window.requestFileSystem
@@ -25,7 +25,7 @@ function initFileSystem() {
 function onFileSystemSuccess(filesystem) {
     // In here, we put where the folder is. If it is found, then it
     // continues to getDirSuccess
-    filesystem.root.getDirectory(rootPath,
+    filesystem.root.getDirectory(folderName,
         {
             create: false, exclusive: false
         },
