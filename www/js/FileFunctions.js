@@ -1,13 +1,18 @@
 document.addEventListener("deviceready", onDeviceReady, false);
 var filesystem = null;
+var pathContext = "proyecto/";
+var rootPath = "proyecto";
 
 function onDeviceReady() {
-    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+    window.requestFileSystem = window.requestFileSystem
+        || window.webkitRequestFileSystem;
     // Start the app by requesting a FileSystem (if the browser supports the API)
     if (window.requestFileSystem) {
         initFileSystem();
+
+        window.requestFileSystem(LocalFileSystem.PERSISTENT,
+            0, onFileSystemSuccess, fail);
     }
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onFileSystemSuccess, fail);
 
 }
 
@@ -18,82 +23,98 @@ function initFileSystem() {
     }, errorHandler);
 }
 function onFileSystemSuccess(filesystem) {
-    // aquí se señala en qué carpeta buscas, si la encuentra, sigue
-    filesystem.root.getDirectory("proyecto", {create: false, exclusive: false}, getDirSuccess, fail);
+    // In here, we put where the folder is. If it is found, then it
+    // continues to getDirSuccess
+    filesystem.root.getDirectory(rootPath,
+        {
+            create: false, exclusive: false
+        },
+        getDirSuccess,
+        fail);
 }
 
 function getDirSuccess(dirEntry) {
     var directoryReader = dirEntry.createReader();
-
-    // lista todo en el directorio
     directoryReader.readEntries(readerSuccess, fail);
 }
 
 var divsTotales;
 function readerSuccess(entries) {
     var i;
+
+    var listado = "";
+    var popUps = "";
     divsTotales = entries.length;
-    var fragment = document.createDocumentFragment();
-    var lista = document.getElementById("archivos");
-    var tabla = document.getElementById("tableList");
+
     for (i = 0; i < entries.length; i++) {
-        var name_link = "<h4>" + entries[i].name + "</h4>";
-        //alert("i es: " + i);
-        var inputBtnDel = document.createElement('input');
-        inputBtnDel.setAttribute("type", "button");
-        inputBtnDel.setAttribute("id", "btnDel" + i);
-        inputBtnDel.setAttribute("value", "delete");
+        listado += "<li data-icon='gear'><a href='#opciones" + i +
+            "' data-rel='popup' data-position-to='window' " +
+            "data-transition='pop'>" + entries[i].name +
+            "</a></li>";
+        var options = "opciones" + i;
+        var deleteOperation = "delop" + i;
+        var editOperation = "editop" + i;
+        popUps += "<div data-role='popup' id='" + options + "' data-theme='a' data-overlay-theme='b' " +
+            "class='ui-content' style='max-width:340px; padding-bottom:2em;'> " +
+            "<h3>Escoja la operacion</h3>" +
+            "<input id='" + deleteOperation + "' type='button' data-icon='delete' " +
+            "value='eliminar' />" +
+            "<input id='" + editOperation + "' type='button' data-icon='edit' " +
+            "value='modificar' /></div>";
 
-        var inputBtnModif = document.createElement('input');
-        inputBtnModif.setAttribute("type", "button");
-        inputBtnModif.setAttribute("id", "btnModif" + i);
-        inputBtnModif.setAttribute("value", "edit");
-
-        var tr = document.createElement('tr');
-        fragment.appendChild(tr);
-        var td1 = document.createElement('td');
-        var td2 = document.createElement('td');
-        var td3 = document.createElement('td');
-
-        td1.innerHTML = name_link;
-        td2.appendChild(inputBtnDel);
-        td3.appendChild(inputBtnModif);
-
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-
-        fragment.appendChild(tr);
 
     }
-    document.querySelector('#tableList').appendChild(fragment);
 
+    actualizarLista(listado);
+    crearPopUps(popUps);
 
-    for (var p = 0; p < entries.length; p++) {
-        (function (p) {
-            //se agregan dos eventListener a cada td de la tabla
-            document.getElementById("btnDel" + p).addEventListener("click", function () {
-                deleteFile(entries[p].name);
+    for (var counter = 0; counter < entries.length; counter++) {
+        (function (counter) {
+            //It is added the delete operation as 'onclick' in each link
+            document.getElementById(deleteOperation + counter).
+            addEventListener("click", function () {
+                deleteFile(entries[counter].name);
             });
-        }(p));
+        }(counter));
 
     }
-
+    //k is another counter
     for (var k = 0; k < entries.length; k++) {
         (function (k) {
-            //se agregan dos eventListener a cada td de la tabla
-            document.getElementById("btnModif" + k).addEventListener("click", function () {
-                editFile(entries[k].name);
+            //It is added the the function that will set the info from the read file, in the view
+            document.getElementById(editOperation + k).
+            addEventListener("click", function () {
+                setInfoFromFile(entries[k].name);
             });
         }(k));
 
     }
 }
 
+var listcreated = false;
+function actualizarLista(datos) {
+    if (!listcreated) {
+        var divList = $("#divList");
+        divList.append("<ul id='lista' data-role='listview' data-inset='true' data-filter='true' " +
+            "data-filter-placeholder='buscar..'></ul>");
+        listCreated = true;
+        divList.trigger("create");
+    }
+    var list = $("#lista");
+    list.append(datos);
+    list.listview("refresh");
+}
+
+function crearPopUps(popups) {
+    var divPopups = $('#popups');
+    divPopups.append(popups);
+    divPopups.trigger("create");
+}
+
 function readFile(filename) {
     var content = null;
-    var direccionArchivo = "proyecto/" + filename;
-    filesystem.root.getFile(direccionArchivo, {}, function (fileEntry) {
+    var path = pathContext + filename;
+    filesystem.root.getFile(path, {}, function (fileEntry) {
         fileEntry.file(function (file) {
             var reader = new FileReader();
             reader.onloadend = function (e) {
@@ -102,13 +123,11 @@ function readFile(filename) {
                 document.getElementById("contenido_archivo_modificar").innerHTML = content;
             };
             reader.readAsText(file);
-            //alert("Archivo " + filename + " Eliminado");
         }, errorHandler);
 
     }, errorHandler);
 }
-function editFile(filename) {
-    //alert(filename);
+function setInfoFromFile(filename) {
     readFile(filename);
     window.location = "#modificar";
 }
@@ -116,7 +135,8 @@ function editFile(filename) {
 function saveEditedFile() {
     var filename = document.getElementById("nombre_archivo_modificar").value;
     var content = document.getElementById("contenido_archivo_modificar").value;
-    var path = "proyecto/" + filename;
+    var path = pathContext + filename;
+
     alert(path);
     filesystem.root.getFile(
         path,
@@ -124,9 +144,10 @@ function saveEditedFile() {
             create: false
         },
         function (fileEntry) {
-            // Create a FileWriter object for our FileEntry (with the given name of the file).
+            // Create a FileWriter object for our FileEntry
+            // (with the given name of the file).
             fileEntry.createWriter(function (fileWriter) {
-                fileWriter.seek(0); //Start write position at EOF
+                fileWriter.seek(0); //Start write position at the beginning of the file
                 var fileParts = [content];
                 var contentBlob = new Blob(fileParts, {
                     type: 'text/html'
@@ -142,8 +163,9 @@ function saveEditedFile() {
 function saveFile() {
     var filename = document.getElementById("nombre_archivo_alta").value;
     var content = document.getElementById("contenido_archivo_alta").value;
-    var direccionArchivo = "proyecto/" + filename + ".txt";
-    filesystem.root.getFile(direccionArchivo, {create: true}, function (fileEntry) {
+    var path = pathContext + filename + ".txt";
+
+    filesystem.root.getFile(path, {create: true}, function (fileEntry) {
 
         fileEntry.createWriter(function (fileWriter) {
             var fileParts = [content];
@@ -170,15 +192,21 @@ function cancelar() {
     window.location.href = "index.html";
 }
 function deleteFile(filename) {
-    var direccionArchivo = "proyecto/" + filename;
-    alert("Se borrara el archivo: proyecto/" + filename);
-    filesystem.root.getFile(direccionArchivo, {create: false}, function (fileEntry) {
-        fileEntry.remove(function () {
-            alert("Archivo " + filename + " Eliminado");
-            window.location.href = "index.html";
-        }, errorHandler);
+    var proceed = confirm("Seguro desea eliminar este archivo: " + filename);
+    if (!proceed) return;
 
-    }, errorHandler);
+    var path = pathContext + filename;
+    filesystem.root.getFile(path,
+        {
+            create: false
+        },
+        function (fileEntry) {
+            fileEntry.remove(function () {
+                alert("Archivo " + filename + " Eliminado");
+                window.location.href = "index.html";
+            }, errorHandler);
+
+        }, errorHandler);
 }
 
 function fail() {

@@ -14,41 +14,70 @@
 <!--Se listaran con la funcion deviceReady() para que salgan al cargarse-->
 <section data-role="page" id="index">
 
-    <h1>Manejo de Archivos</h1>
+    <header data-role="header">
+        <h1>Manejo de Archivos</h1>
+    </header>
 
     <!--Los archivos que se listen se les debe de poder hacer click y
       mostrar un mensaje para eliminarlos o editarlos-->
 
-    <table data-role="table" id="tableList"></table>
+    <div data-role="content">
+        <table data-role="table" id="tableList"></table>
 
-    <a href="#alta">Nueva</a>
-    <a href="#modificar">Modificar</a>
+        <div id="divList">
+
+        </div>
+    </div>
+
+    <div id="popups">
+
+    </div>
+
+
+    <footer data-role="footer" data-position="fixed">
+        <a data-icon="plus" data-role="button" data-transition="pop" href="#alta">Nueva</a>
+
+    </footer>
 </section>
 
 <section data-role="page" id="modificar">
-    <h1>Modificar Archivos</h1>
-    <label for="nombre_archivo_modificar">Nombre:</label>
-    <input type="text" id="nombre_archivo_modificar" disabled/>
+    <header data-role="header">
+        <h1>Modificar Archivos</h1>
+    </header>
 
-    <label for="nombre_archivo_modificar">Contenido:</label>
-    <textarea cols="30" rows="50" id="contenido_archivo_modificar" title="Contenido"></textarea>
+    <div data-role="content">
+        <label for="nombre_archivo_modificar">Nombre:</label>
+        <input type="text" id="nombre_archivo_modificar" disabled/>
 
-    <input type="button" onclick="saveEditedFile();" value="Guardar"/>
-    <input type="button" onclick="cancelar();" value="cancelar"/>
+        <label for="contenido_archivo_modificar">Contenido:</label>
+        <textarea style="width:100%" cols="30" rows="50" id="contenido_archivo_modificar"></textarea>
+    </div>
 
+    <footer data-role="footer" data-position="fixed">
+        <input data-icon="check" type="button" onclick="saveEditedFile();" value="Guardar"/>
+        <input data-icon="delete" type="button" onclick="cancelar();" value="cancelar"/>
+    </footer>
 </section>
 
 <section data-role="page" id="alta">
-    <h1>Alta Archivos</h1>
-    <label for="nombre_archivo_alta">Nombre:</label>
-    <input type="text" id="nombre_archivo_alta"/>
+    <header data-role="header">
+        <h1>Alta Archivos</h1>
+    </header>
 
-    <label for="nombre_archivo_modificar">Contenido:</label>
-    <textarea cols="30" rows="50" id="contenido_archivo_alta"></textarea>
+    <div data-role="content">
+        <label for="nombre_archivo_alta">Nombre:</label>
+        <input type="text" id="nombre_archivo_alta"/>
 
-    <input type="button" onclick="saveFile();" value="Guardar"/>
-    <input type="button" onclick="cancelar();" value="cancelar"/>
+        <label for="contenido_archivo_alta">Contenido:</label>
+        <textarea style="width:100% !important;" cols="30" rows="50" id="contenido_archivo_alta"></textarea>
+    </div>
 
+    <footer data-role="footer" data-position="fixed">
+        <input data-icon="check" type="button" onclick="saveFile();" value="Guardar"/>
+        <input data-icon="delete" type="button" onclick="cancelar();" value="cancelar"/>
+    </footer>
 </section>
+
+
 </body>
 </html>
