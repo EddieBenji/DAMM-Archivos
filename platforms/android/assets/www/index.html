@@ -1,79 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>File API</title>
-        <script src="cordova.js"></script>
-        <script src="text.js"></script>
-        <script src="js/jquery-2.1.4.min.js"></script>
-        <script src="js/jquery.mobile-1.4.5.min.js"></script>
-        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
-    </head>
-    <body>
-        <!--Pagina Donde se Listaran todos los archivos TXT-->
-        <!--Se listaran con la funcion deviceReady() para que salgan al cargarse-->
-        <section data-role="page" id="index" >
-            <header data-role="header">
-                <h1>Manejo de Archivos</h1>
-            </header>
-            <div data-role="content">
-                <div>
-                    <h1>Aqui iran listados todos los archivos .txt</h1> 
-                    <!--Los archivos que se listen se les debe de poder hacer click y
-                      mostrar un mensaje para eliminarlos o editarlos-->
-                </div>
-            </div>
-            <footer data-role="footer" data-position="fixed">
-                <a data-icon="plus" data-role="button" data-transition="pop" href="#alta">Nueva</a>
-            </footer>
-        </section>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <script src="cordova.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <!--Este Js es el que tiene las funciones que hicimos hoy. Las que no necesites, bórralas.-->
+    <script src="js/FileFunctions.js"></script>
+</head>
 
-        <!--Pagina Para dar de Alta una Nueva Nota-->
-        <section data-role="page" id="alta" >
-            <header data-role="header">
-                <h1>Archivo .txt Nuevo</h1>
-            </header>
-            <div data-role="content">
+<body>
+<!--Pagina Donde se Listaran todos los archivos TXT-->
+<!--Se listaran con la funcion deviceReady() para que salgan al cargarse-->
+<section data-role="page" id="index">
 
-                <label for="nombre_archivo"> Nombre del Archivo:</label> 
-                <input type="text" id="nombre_archivo" />
+    <header data-role="header">
+        <h1>Manejo de Archivos</h1>
+    </header>
 
-                <label for="contenido_archivo"> Contenido:</label>
-                <textarea rows="20" cols="50" id="contenido_archivo"></textarea>
+    <!--Los archivos que se listen se les debe de poder hacer click y
+      mostrar un mensaje para eliminarlos o editarlos-->
 
-            </div>
-            <footer data-role="footer" data-position="fixed">
-                <!--<a data-icon="delete" data-role="button" data-transition="pop" href="#index">Cancelar</a>-->
-                <input data-icon="delete" type="button" onclick="cancelar();" value="Cancelar"/>
-                <input data-icon="check" type="button" onclick="escribeArchivo();" value="Guardar"/>
-            </footer>
-        </section>
-        
-        
-        <!--Pagina Para Editar el archivo previamente seleccionado-->
-        <!--Sera igual a la de alta pero se mostraran los datos del archivo seleccionado-->
-        <!--Se puede cambiar la idea de esta si esta muy cabrona-->
-         <section data-role="page" id="modificar" >
-            <header data-role="header">
-                <h1>Archivo .txt a Modificar</h1>
-            </header>
-            <div data-role="content">
+    <div data-role="content">
+        <table data-role="table" id="tableList"></table>
 
-                <label for="nombre_archivo_a_modificar"> Nombre del Archivo:</label> \
-                <!--En este inut que se muestre el nombre del archivo-->
-                <input type="text" id="nombre_archivo_a_modificar" disabled/>
+        <div id="divList">
 
-                <label for="contenido_archivo_a_modificar"> Contenido:</label>
-                <!--En este textarea que se muestre la info del archivo elegido-->
-                <textarea rows="20" cols="50" id="contenido_archivo_a_modificar"></textarea>
+        </div>
+    </div>
 
-            </div>
-            <footer data-role="footer" data-position="fixed">
-                <a data-icon="delete" data-role="button" data-transition="pop" href="#index">Cancelar</a>
-                <input data-icon="check" type="button" onclick="" value="Guardar"/>
-            </footer>
-        </section>
-        
-        
-    </body>
+    <div id="popups">
+
+    </div>
+
+
+    <footer data-role="footer" data-position="fixed">
+        <a data-icon="plus" data-role="button" data-transition="pop" href="#alta">Nueva</a>
+
+    </footer>
+</section>
+
+<section data-role="page" id="modificar">
+    <header data-role="header">
+        <h1>Modificar Archivos</h1>
+    </header>
+
+    <div data-role="content">
+        <label for="nombre_archivo_modificar">Nombre:</label>
+        <input type="text" id="nombre_archivo_modificar" disabled/>
+
+        <label for="contenido_archivo_modificar">Contenido:</label>
+        <textarea style="width:100%" cols="30" rows="50" id="contenido_archivo_modificar"></textarea>
+    </div>
+
+    <footer data-role="footer" data-position="fixed">
+        <input data-icon="check" type="button" onclick="saveEditedFile();" value="Guardar"/>
+        <input data-icon="delete" type="button" onclick="cancelar();" value="cancelar"/>
+    </footer>
+</section>
+
+<section data-role="page" id="alta">
+    <header data-role="header">
+        <h1>Alta Archivos</h1>
+    </header>
+
+    <div data-role="content">
+        <label for="nombre_archivo_alta">Nombre:</label>
+        <input type="text" id="nombre_archivo_alta"/>
+
+        <label for="contenido_archivo_alta">Contenido:</label>
+        <textarea style="width:100% !important;" cols="30" rows="50" id="contenido_archivo_alta"></textarea>
+    </div>
+
+    <footer data-role="footer" data-position="fixed">
+        <input data-icon="check" type="button" onclick="saveFile();" value="Guardar"/>
+        <input data-icon="delete" type="button" onclick="cancelar();" value="cancelar"/>
+    </footer>
+</section>
+
+
+</body>
 </html>

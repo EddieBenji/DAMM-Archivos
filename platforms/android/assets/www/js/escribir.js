@@ -1,24 +1,23 @@
-
 document.addEventListener("deviceready", deviceReady, false);
 var filesystem = null;
 var messageBox;
 
 function deviceReady() {
-
     // Allow for vendor prefixes.
-    window.requestFileSystem = window.requestFileSystem ||
-            window.webkitRequestFileSystem;
-    messageBox = document.getElementById('messages');
+    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 
 
-
-// Start the app by requesting a FileSystem (if the browser supports the API)
+    // Start the app by requesting a FileSystem (if the browser supports the API)
     if (window.requestFileSystem) {
         initFileSystem();
-        alert("Si se pueden escribir archivos.");
-    } else {
-        alert("Sorry! Your browser doesn\'t support the FileSystem API :(");
     }
+}
+
+function initFileSystem() {
+    // Request a file system with the new size.
+    window.requestFileSystem(window.PERSISTENT, 1024, function (fs) {
+        filesystem = fs;
+    }, errorHandler);
 }
 
 // A simple error handler to be used throughout this demo.
@@ -47,26 +46,20 @@ function errorHandler(error) {
     alert(message);
 }
 
-function pruebaArchivos()
-{
-    if (window.requestFileSystem) {
-        alert("Los archivos si son soportados");
+function escribeArchivo() {
+    var titulo = document.getElementById("titulo").value;
+    var contenido = document.getElementById("contenido").value;
+
+    if (titulo != "" && contenido != "") {
+        saveFile(titulo + ".txt", contenido);
     } else {
-        alert("No se soportan el manejo de archivos :(");
+        alert("Faltan Datos");
     }
-
 }
-
-function initFileSystem() {
-    // Request a file system with the new size.
-    window.requestFileSystem(window.PERSISTENT, 1024, function (fs) {
-        filesystem = fs;
-    }, errorHandler);
-}
-
 
 function saveFile(filename, content) {
-    filesystem.root.getFile(filename, {create: true}, function (fileEntry) {
+    var direccionArchivo = "proyecto/" + filename;
+    filesystem.root.getFile(direccionArchivo, {create: true}, function (fileEntry) {
 
         fileEntry.createWriter(function (fileWriter) {
             var fileParts = [content];
@@ -74,11 +67,7 @@ function saveFile(filename, content) {
             fileWriter.write(contentBlob);
 
             fileWriter.onwriteend = function (e) {
-                // messageBox.innerHTML = 'File saved!';
                 alert("Archivo Guardado");
-                document.getElementById("nombre_archivo").value = "";
-                document.getElementById("contenido_archivo").value = "";
-                window.location = "index.html";
             };
 
             fileWriter.onerror = function (e) {
@@ -89,20 +78,10 @@ function saveFile(filename, content) {
         }, errorHandler);
 
     }, errorHandler);
+    window.location.href = "index.html";
 }
 
 function cancelar() {
-    document.getElementById("nombre_archivo").innerHTML = "";
-    document.getElementById("contenido_archivo").innerHTML = "";
-    window.location = "index.html";
+    window.location.href = "index.html";
+
 }
-
-function escribeArchivo() {
-    var nombreArchivo = document.getElementById("nombre_archivo").value;
-    nombreArchivo = nombreArchivo + ".txt";
-
-    var contenidoArchivo = document.getElementById("contenido_archivo").value;
-
-    saveFile(nombreArchivo, contenidoArchivo);
-}
-;
